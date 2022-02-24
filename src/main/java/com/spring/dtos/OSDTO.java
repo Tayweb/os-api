@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spring.domain.OS;
+import com.spring.domain.enuns.Prioridade;
+import com.spring.domain.enuns.Status;
 
 public class OSDTO implements Serializable {
 
@@ -21,7 +23,7 @@ public class OSDTO implements Serializable {
 	@NotEmpty(message = "O campo observações é obrigatório")
 	private String observacoes;
 	private Integer status;
-	private Long tecnico;
+	private Long funcionario;
 	private Long cliente;
 
 	public OSDTO() {
@@ -36,7 +38,7 @@ public class OSDTO implements Serializable {
 		this.prioridade = obj.getPrioridade().getCod();
 		this.observacoes = obj.getObservacoes();
 		this.status = obj.getStatus().getCod();
-		this.tecnico = obj.getTecnico().getId();
+		this.funcionario = obj.getFuncionario().getId();
 		this.cliente = obj.getCliente().getId();
 	}
 
@@ -64,8 +66,8 @@ public class OSDTO implements Serializable {
 		this.dataFechamento = dataFechamento;
 	}
 
-	public Integer getPrioridade() {
-		return prioridade;
+	public Prioridade getPrioridade() throws IllegalAccessException {
+		return Prioridade.toEnum(this.prioridade);
 	}
 
 	public void setPrioridade(Integer prioridade) {
@@ -80,20 +82,20 @@ public class OSDTO implements Serializable {
 		this.observacoes = observacoes;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public Status getStatus() throws IllegalAccessException {
+		return Status.toEnum(this.status);
 	}
 
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
-	public Long getTecnico() {
-		return tecnico;
+	public Long getFuncionario() {
+		return funcionario;
 	}
 
-	public void setTecnico(Long tecnico) {
-		this.tecnico = tecnico;
+	public void setFuncionario(Long funcionario) {
+		this.funcionario = funcionario;
 	}
 
 	public Long getCliente() {

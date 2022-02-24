@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.domain.Cliente;
-import com.spring.domain.Pessoa;
+import com.spring.domain.Funcionario;
 import com.spring.dtos.ClienteDTO;
 import com.spring.repository.ClienteRepository;
-import com.spring.repository.PessoaRepository;
+import com.spring.repository.FuncionarioRepository;
 import com.spring.service.exceptions.DataIntegratyViolationException;
 import com.spring.service.exceptions.ObjectNotFoundException;
 
@@ -20,19 +20,18 @@ import com.spring.service.exceptions.ObjectNotFoundException;
 public class ClienteService {
 
 	@Autowired
-	private ClienteRepository tecnicoRepository;
+	private ClienteRepository clienteRepository;
 	
-	@Autowired
-	private PessoaRepository pessoaRepository;
+	
 
 	public Cliente buscarid(Long id) {
-		Optional<Cliente> obj = tecnicoRepository.findById(id); // Já que está Optional, ele pode encontrar o id ou não
+		Optional<Cliente> obj = clienteRepository.findById(id); // Já que está Optional, ele pode encontrar o id ou não
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id:" + id + ", Tipo:" + Cliente.class.getName()));
 	}
 
 	public List<Cliente> listar() {
-		return tecnicoRepository.findAll();
+		return clienteRepository.findAll();
 	}
 
 	public Cliente salvar(ClienteDTO objDTO) {
@@ -40,7 +39,7 @@ public class ClienteService {
 			throw new DataIntegratyViolationException("CPF já cadastrado");
 		}
 		Cliente newObj = new Cliente(null, objDTO.getNome(), objDTO.getCpf(), objDTO.getTelefone());
-		return tecnicoRepository.save(newObj);
+		return clienteRepository.save(newObj);
 	}
 
 	public Cliente atualizar(Long id, @Valid ClienteDTO objDTO) {
@@ -54,7 +53,7 @@ public class ClienteService {
 		tecnico.setCpf(objDTO.getCpf());
 		tecnico.setTelefone(objDTO.getTelefone());
 
-		return tecnicoRepository.save(tecnico);
+		return clienteRepository.save(tecnico);
 	}
 	
 	public void delete(Long id) {
@@ -62,12 +61,12 @@ public class ClienteService {
 		if (obj.getList().size() > 0) {
 			throw new DataIntegratyViolationException("Cliente possui Ordens de Serviço ativo, não pode ser excluido");
 		}
-		 tecnicoRepository.deleteById(id);
+		 clienteRepository.deleteById(id);
 		
 	}
 
-	private Pessoa verificarCPF(ClienteDTO objDTO) {
-		Pessoa obj = pessoaRepository.buscarCPF(objDTO.getCpf());
+	private Cliente verificarCPF(ClienteDTO objDTO) {
+		Cliente obj = clienteRepository.buscarCPF(objDTO.getCpf());
 		if (obj != null) {
 			return obj;
 		}

@@ -23,7 +23,7 @@ import com.spring.domain.Cliente;
 import com.spring.dtos.ClienteDTO;
 import com.spring.service.ClienteService;
 
-@CrossOrigin("*")
+
 @RestController
 @RequestMapping(value = "/cliente")
 public class ClienteController {
@@ -36,7 +36,7 @@ public class ClienteController {
 		ClienteDTO objDto = new ClienteDTO(clienteService.buscarid(id));
 		return ResponseEntity.ok().body(objDto);
 	}
-
+	
 	@GetMapping(value = "listar")
 	public ResponseEntity<List<ClienteDTO>> listar() {
 		List<Cliente> list = clienteService.listar();

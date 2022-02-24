@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.domain.Cliente;
+import com.spring.domain.Funcionario;
 import com.spring.domain.OS;
-import com.spring.domain.Tecnico;
 import com.spring.domain.enuns.Prioridade;
 import com.spring.domain.enuns.Status;
 import com.spring.dtos.OSDTO;
@@ -25,7 +25,7 @@ public class OsService {
 	private OSRepository osRepository;
 
 	@Autowired
-	private TecnicoService tecnicoService;
+	private FuncionarioService funcionarioService;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -54,14 +54,14 @@ public class OsService {
 		OS newObj = new OS();
 		newObj.setId(obj.getId());
 		newObj.setObservacoes(obj.getObservacoes());
-		newObj.setPrioridade(Prioridade.toEnum(obj.getPrioridade()));
-		newObj.setStatus(Status.toEnum(obj.getStatus()));
+		newObj.setPrioridade(Prioridade.toEnum(obj.getPrioridade().getCod()));
+		newObj.setStatus(Status.toEnum(obj.getStatus().getCod()));
 
-		Tecnico tecnico = tecnicoService.buscarid(obj.getTecnico());
 		Cliente cliente = clienteService.buscarid(obj.getCliente());
+		Funcionario funcionario = funcionarioService.buscarid(obj.getFuncionario());
 
 		newObj.setCliente(cliente);
-		newObj.setTecnico(tecnico);
+		newObj.setFuncionario(funcionario);
 		
 		if (newObj.getStatus().getCod().equals(2)) {
 			newObj.setDataFechamento(LocalDateTime.now());

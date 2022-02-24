@@ -35,8 +35,8 @@ public class OS implements Serializable {
 	private Integer status;
 	
 	@ManyToOne
-	@JoinColumn(name = "tecnico_id")
-	private Tecnico tecnico;
+	@JoinColumn(name = "funcionario_id")
+	private Funcionario funcionario;
 	
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
@@ -49,14 +49,14 @@ public class OS implements Serializable {
 		this.setStatus(Status.ABERTO);
 	}
 
-	public OS(Long id, Prioridade prioridade, String observacoes, Status status, Tecnico tecnico, Cliente cliente) {
+	public OS(Long id, Prioridade prioridade, String observacoes, Status status, Funcionario funcionario, Cliente cliente) {
 		super();
 		this.id = id;
 		this.setDataAbertura(LocalDateTime.now());
 		this.prioridade = (prioridade == null) ? 0 : prioridade.getCod();
 		this.observacoes = observacoes;
 		this.status = (status == null) ? 0 : status.getCod();
-		this.tecnico = tecnico;
+		this.funcionario = funcionario;
 		this.cliente = cliente;
 	}
 
@@ -108,12 +108,12 @@ public class OS implements Serializable {
 		this.status = status.getCod();
 	}
 
-	public Tecnico getTecnico() {
-		return tecnico;
+	public Funcionario getFuncionario() {
+		return funcionario;
 	}
 
-	public void setTecnico(Tecnico tecnico) {
-		this.tecnico = tecnico;
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
 	}
 
 	public Cliente getCliente() {
