@@ -20,11 +20,14 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> 
 	@Query("select obj from Funcionario obj where obj.login =:login")
 	Funcionario buscarlogin1(@Param("login") String login);
 	
-	@Query("select u from Funcionario u where u.login =?1")
+	@Query("select u from Funcionario u where u.login =?1 and ativo = true")
 	Funcionario acessoLogin(String login);
 	
 	@Query("select obj from Funcionario obj where obj.ativo = true")
 	List<Funcionario> ListaFuncioAtivo();
+	
+	@Query("select obj from Funcionario obj where obj.ativo = true and cargo= 1")
+	List<Funcionario> ListaFuncioTecAtivo();
 
 	
 	@Transactional

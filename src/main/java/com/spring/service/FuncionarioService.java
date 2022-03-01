@@ -3,6 +3,9 @@ package com.spring.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -11,7 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.spring.domain.Funcionario;
+import com.spring.domain.OS;
 import com.spring.domain.enuns.Cargo;
+import com.spring.domain.enuns.Status;
 import com.spring.dtos.FuncionarioDTO;
 import com.spring.repository.FuncionarioRepository;
 import com.spring.service.exceptions.DataIntegratyViolationException;
@@ -37,6 +42,10 @@ public class FuncionarioService {
 		return funcionarioRepository.ListaFuncioAtivo();
 	}
 
+	public List<Funcionario> listarTecnico() {
+		return funcionarioRepository.ListaFuncioTecAtivo();
+	}
+
 	public Funcionario salvar(FuncionarioDTO objDTO) throws Exception {
 		if (verificarCPF(objDTO) != null) {
 			throw new DataIntegratyViolationException("CPF já cadastrado");
@@ -46,7 +55,7 @@ public class FuncionarioService {
 		}
 
 		return fromDTO(objDTO);
-		
+
 	}
 
 	public Funcionario atualizar(Long id, @Valid FuncionarioDTO objDTO) throws Exception {
@@ -55,7 +64,7 @@ public class FuncionarioService {
 		if (verificarCPF(objDTO) != null && verificarCPF(objDTO).getId() != id) {
 			throw new DataIntegratyViolationException("CPF já cadastrado");
 		}
-	
+
 		funcionario.setNome(objDTO.getNome());
 		funcionario.setCpf(objDTO.getCpf());
 		funcionario.setTelefone(objDTO.getTelefone());
@@ -78,10 +87,36 @@ public class FuncionarioService {
 //	}
 
 	public Funcionario desativarFuncionario(Long id) {
+
 		Funcionario obj = buscarid(id);
-		if (obj.getList().size() > 0) {
+		boolean existeOSAberto = obj.getList().stream().anyMatch(os -> {
+			
+			try {
+				return os.getStatus().equals(Status.ABERTO);
+			} catch (IllegalAccessException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return false;
+		});
+		
+		boolean existeOSAndamento = obj.getList().stream().anyMatch(os -> {
+			
+			try {
+				return os.getStatus().equals(Status.ANDAMENTO);
+			} catch (IllegalAccessException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return false;
+		});
+
+		if (existeOSAberto || existeOSAndamento) {
 			throw new DataIntegratyViolationException(
 					"Funcionário possui Ordens de Serviços ativos, não pode ser desativado");
+
 		}
 
 		obj.setDataDemissao(LocalDateTime.now());
@@ -121,7 +156,7 @@ public class FuncionarioService {
 
 		funcionario = funcionarioRepository.save(funcionario);
 		implementacaoUserDetailsService.insereAcessoPadrao(funcionario.getId());
-		
+
 		return funcionario;
 	}
 

@@ -45,6 +45,18 @@ public class FuncionarioController {
 		}
 		return ResponseEntity.ok().body(listDTO);
 	}
+	
+	
+	@GetMapping(value = "listatecnico")
+	public ResponseEntity<List<FuncionarioDTO>> listarTecnico() throws Exception {
+		List<Funcionario> list = funcionarioService.listarTecnico();
+		List<FuncionarioDTO> listDTO = new ArrayList<>();
+		
+		for (Funcionario obj : list) {
+			listDTO.add(new FuncionarioDTO(obj));
+		}
+		return ResponseEntity.ok().body(listDTO);
+	}
 
 	@PostMapping(value = "salvar")
 	public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioDTO objDTO) throws Exception {

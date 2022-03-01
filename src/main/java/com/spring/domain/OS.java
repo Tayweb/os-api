@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class OS implements Serializable {
 	private Long id;
 	
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+	@Column(updatable = false)
 	private LocalDateTime dataAbertura;
 	
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
