@@ -32,6 +32,10 @@ public class RelatorioService implements Serializable {
 
 	public String imprimirRelatorio(HttpServletRequest request, OSReport osReport) throws Exception {
 
+		if (osReport.getDataInicio() == null && osReport.getDataFim() == null) {
+			throw new DataIntegratyViolationException("Campo de datas obrigatorio");
+		}
+		
 		String dataInicio = osReport.getDataInicio();
 		String dataFim = osReport.getDataFim();
 

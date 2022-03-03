@@ -5,8 +5,6 @@ public class OSReport {
 	private Integer id;
 	private String dataInicio;
 	private String dataFim;
-	
-	
 
 	
 	public Integer getId() {

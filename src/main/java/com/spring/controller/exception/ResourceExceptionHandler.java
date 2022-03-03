@@ -36,7 +36,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<StandardError> objectNotFoundException(MethodArgumentNotValidException e) {
 		ValidationError error = new ValidationError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
-				"Erro na validação dos campos");
+				"Campos obrigaórios");
 
 		for (FieldError x : e.getBindingResult().getFieldErrors()) {
 			error.addError(x.getField(), x.getDefaultMessage());
