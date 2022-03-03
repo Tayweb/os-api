@@ -1,1 +1,0 @@
-web: java -Dserver.port=$PORT -Dosapi.profiles.active=dev -jar target/OS-Api-0.0.1-SNAPSHOT.jar
