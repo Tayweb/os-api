@@ -1,26 +1,20 @@
 package com.spring.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.spring.domain.Funcionario;
-import com.spring.domain.OS;
-import com.spring.domain.enuns.Cargo;
-import com.spring.domain.enuns.Status;
+import com.spring.domain.enuns.CargoEnum;
+import com.spring.domain.enuns.StatusEnum;
 import com.spring.dtos.FuncionarioDTO;
 import com.spring.repository.FuncionarioRepository;
 import com.spring.service.exceptions.DataIntegratyViolationException;
 import com.spring.service.exceptions.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FuncionarioService {
@@ -68,7 +62,7 @@ public class FuncionarioService {
 		funcionario.setNome(objDTO.getNome());
 		funcionario.setCpf(objDTO.getCpf());
 		funcionario.setTelefone(objDTO.getTelefone());
-		funcionario.setCargo(Cargo.toEnum(objDTO.getCargo()));
+		funcionario.setCargo(CargoEnum.toEnum(objDTO.getCargo()));
 		funcionario.setLogin(objDTO.getLogin());
 
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(objDTO.getSenha());
@@ -92,7 +86,7 @@ public class FuncionarioService {
 		boolean existeOSAberto = obj.getList().stream().anyMatch(os -> {
 			
 			try {
-				return os.getStatus().equals(Status.ABERTO);
+				return os.getStatus().equals(StatusEnum.ABERTO);
 			} catch (IllegalAccessException e) {
 				
 				e.printStackTrace();
@@ -104,7 +98,7 @@ public class FuncionarioService {
 		boolean existeOSAndamento = obj.getList().stream().anyMatch(os -> {
 			
 			try {
-				return os.getStatus().equals(Status.ANDAMENTO);
+				return os.getStatus().equals(StatusEnum.ANDAMENTO);
 			} catch (IllegalAccessException e) {
 				
 				e.printStackTrace();
@@ -147,7 +141,7 @@ public class FuncionarioService {
 		funcionario.setNome(objDto.getNome());
 		funcionario.setCpf(objDto.getCpf());
 		funcionario.setTelefone(objDto.getTelefone());
-		funcionario.setCargo(Cargo.toEnum(objDto.getCargo()));
+		funcionario.setCargo(CargoEnum.toEnum(objDto.getCargo()));
 		funcionario.setLogin(objDto.getLogin());
 
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(objDto.getSenha());

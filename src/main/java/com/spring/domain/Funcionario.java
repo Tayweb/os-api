@@ -17,16 +17,20 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.spring.domain.enuns.Cargo;
-import com.spring.domain.enuns.Status;
+import com.spring.domain.enuns.CargoEnum;
 
+@Builder
+@Getter
+@Setter
 @Entity
-
 public class Funcionario implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
@@ -64,10 +68,9 @@ public class Funcionario implements UserDetails {
 	public Funcionario() {
 		super();
 		this.setDataAdimissao(LocalDateTime.now());
-
 	}
 
-	public Funcionario(Long id, String nome, @CPF String cpf, String telefone, Cargo cargo, 
+	public Funcionario(Long id, String nome, @CPF String cpf, String telefone, CargoEnum cargo,
 			String login, String senha) {
 		super();
 		this.id = id;
@@ -84,126 +87,18 @@ public class Funcionario implements UserDetails {
 	// São os tipos de acessos do usuário
 	@Override
 	public Collection<Role> getAuthorities() {
-
 		return roles;
-	}
-
-	
-	public boolean isAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
-
-	public LocalDateTime getDataAdimissao() {
-		return dataAdimissao;
-	}
-
-	public void setDataAdimissao(LocalDateTime dataAdimissao) {
-		this.dataAdimissao = dataAdimissao;
-	}
-
-	public LocalDateTime getDataDemissao() {
-		return dataDemissao;
-	}
-
-	public void setDataDemissao(LocalDateTime dataDemissao) {
-		this.dataDemissao = dataDemissao;
-	}
-
-	public Cargo getCargo() throws IllegalAccessException {
-		return Cargo.toEnum(this.cargo);
-	}
-
-	public void setCargo(Cargo cargo) {
-		this.cargo = cargo.getCod();
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-
-	public List<OS> getList() {
-		return list;
-	}
-
-	public void setList(List<OS> list) {
-		this.list = list;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
 	@JsonIgnore
 	@Override
 	public String getPassword() {
-
 		return this.senha;
 	}
 
 	@JsonIgnore
 	@Override
 	public String getUsername() {
-
 		return this.login;
 	}
 
@@ -228,7 +123,6 @@ public class Funcionario implements UserDetails {
 	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
-
 		return true;
 	}
 

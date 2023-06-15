@@ -1,69 +1,36 @@
 package com.spring.dtos;
 
-import java.io.Serializable;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
 
-import com.spring.domain.Cliente;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	@NotEmpty(message = "Campo Nome obrigatório")
+
+	@Length(min = 5, message = "Nome deve ter no mínimo 5 caracteres")
 	private String nome;
 
 	@CPF
-	@NotEmpty(message = "Campo CPF obrigatório")
+	@NotNull(message = "CPF não informado")
 	private String cpf;
 	
-	@NotEmpty(message = "Campo Telefone obrigatório")
+	@NotBlank(message = "Campo Telefone obrigatório")
 	private String telefone;
-
-	public ClienteDTO() {
-		super();
-	}
-
-	public ClienteDTO(Cliente obj) {
-		super();
-		this.id = obj.getId();
-		this.nome = obj.getNome();
-		this.cpf = obj.getCpf();
-		this.telefone = obj.getTelefone();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
 
 }

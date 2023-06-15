@@ -7,8 +7,16 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "role")
 @SequenceGenerator(name = "seq_role", sequenceName = "seq_role", allocationSize = 1, initialValue = 1)
@@ -19,29 +27,11 @@ public class Role implements GrantedAuthority {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_role")
 	private Long id;
-
-	private String nomeRole; // ROLE_ADMIN, ROLE_GERENTE...
+	private String nomeRole;
 
 	@Override
-	public String getAuthority() { // Retorna o nome do papel, acesso ou autorização exemplo ROLE_GERENTE
-
+	public String getAuthority() {
 		return this.nomeRole;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNomeRole() {
-		return nomeRole;
-	}
-
-	public void setNomeRole(String nomeRole) {
-		this.nomeRole = nomeRole;
 	}
 
 }

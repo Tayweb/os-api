@@ -5,16 +5,14 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import com.spring.service.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.domain.Cliente;
-import com.spring.domain.Funcionario;
 import com.spring.dtos.ClienteDTO;
 import com.spring.repository.ClienteRepository;
-import com.spring.repository.FuncionarioRepository;
 import com.spring.service.exceptions.DataIntegratyViolationException;
-import com.spring.service.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {

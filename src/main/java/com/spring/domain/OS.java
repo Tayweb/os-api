@@ -2,7 +2,6 @@ package com.spring.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.spring.domain.enuns.Prioridade;
-import com.spring.domain.enuns.Status;
+import com.spring.domain.enuns.PrioridadeEnum;
+import com.spring.domain.enuns.StatusEnum;
 
 @Entity
 public class OS implements Serializable {
@@ -47,11 +46,11 @@ public class OS implements Serializable {
 	public OS() {
 		super();
 		this.setDataAbertura(LocalDateTime.now());
-		this.setPrioridade(Prioridade.BAIXA);
-		this.setStatus(Status.ABERTO);
+		this.setPrioridade(PrioridadeEnum.BAIXA);
+		this.setStatus(StatusEnum.ABERTO);
 	}
 
-	public OS(Long id, Prioridade prioridade, String observacoes, Status status, Funcionario funcionario, Cliente cliente) {
+	public OS(Long id, PrioridadeEnum prioridade, String observacoes, StatusEnum status, Funcionario funcionario, Cliente cliente) {
 		super();
 		this.id = id;
 		this.setDataAbertura(LocalDateTime.now());
@@ -86,11 +85,11 @@ public class OS implements Serializable {
 		this.dataFechamento = dataFechamento;
 	}
 
-	public Prioridade getPrioridade() throws IllegalAccessException {
-		return Prioridade.toEnum(this.prioridade);
+	public PrioridadeEnum getPrioridade() throws IllegalAccessException {
+		return PrioridadeEnum.toEnum(this.prioridade);
 	}
 
-	public void setPrioridade(Prioridade prioridade) {
+	public void setPrioridade(PrioridadeEnum prioridade) {
 		this.prioridade = prioridade.getCod();
 	}
 
@@ -102,11 +101,11 @@ public class OS implements Serializable {
 		this.observacoes = observacoes;
 	}
 
-	public Status getStatus() throws IllegalAccessException {
-		return Status.toEnum(this.status);
+	public StatusEnum getStatus() throws IllegalAccessException {
+		return StatusEnum.toEnum(this.status);
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status.getCod();
 	}
 
@@ -124,23 +123,6 @@ public class OS implements Serializable {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OS other = (OS) obj;
-		return Objects.equals(id, other.id);
 	}
 
 }

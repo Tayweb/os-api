@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.spring.domain.Cliente;
 import com.spring.domain.Funcionario;
 import com.spring.domain.OS;
-import com.spring.domain.enuns.Prioridade;
-import com.spring.domain.enuns.Status;
+import com.spring.domain.enuns.PrioridadeEnum;
+import com.spring.domain.enuns.StatusEnum;
 import com.spring.dtos.OSDTO;
 import com.spring.repository.OSRepository;
 import com.spring.service.exceptions.ObjectNotFoundException;
@@ -54,8 +54,8 @@ public class OsService {
 		OS newObj = new OS();
 		newObj.setId(obj.getId());
 		newObj.setObservacoes(obj.getObservacoes());
-		newObj.setPrioridade(Prioridade.toEnum(obj.getPrioridade().getCod()));
-		newObj.setStatus(Status.toEnum(obj.getStatus().getCod()));
+		newObj.setPrioridade(PrioridadeEnum.toEnum(obj.getPrioridade().getCod()));
+		newObj.setStatus(StatusEnum.toEnum(obj.getStatus().getCod()));
 
 		Cliente cliente = clienteService.buscarid(obj.getCliente());
 		Funcionario funcionario = funcionarioService.buscarid(obj.getFuncionario());

@@ -1,13 +1,13 @@
 package com.spring.domain.enuns;
 
-public enum Cargo {
+public enum PrioridadeEnum {
 
-	ASSISTENTE(0, "ASSISTENTE"), TECNICO(1, "TECNICO");
+	BAIXA(0, "BAIXA"), MEDIA(1, "MEDIA"), ALTA(2, "ALTA");
 
 	private Integer cod;
 	private String descricao;
 
-	private Cargo(Integer cod, String descricao) {
+	private PrioridadeEnum(Integer cod, String descricao) {
 		this.cod = cod;
 		this.descricao = descricao;
 	}
@@ -21,18 +21,18 @@ public enum Cargo {
 	}
 	
 	
-	public static Cargo toEnum(Integer cod) throws IllegalAccessException {
+	public static PrioridadeEnum toEnum(Integer cod) throws IllegalAccessException {
 		if (cod == null) {
 			return null;
 		}
 		
-		for(Cargo x: Cargo.values()) {
+		for(PrioridadeEnum x: PrioridadeEnum.values()) {
 			if (cod.equals(x.getCod())) {
 				return x;
 			}
 		}
 		
-		throw new IllegalAccessException("Cargo inválido!" + cod);
+		throw new IllegalAccessException("Prioridade inválida!" + cod);
 	}
 
 }

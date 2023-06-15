@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.spring.domain.Funcionario;
 import com.spring.domain.OSReport;
 import com.spring.service.exceptions.DataIntegratyViolationException;
-import com.spring.service.exceptions.ObjectNotFoundException;
 
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
