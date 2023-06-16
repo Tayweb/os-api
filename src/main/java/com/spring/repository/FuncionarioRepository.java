@@ -1,6 +1,7 @@
 package com.spring.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,10 +16,10 @@ import com.spring.domain.Funcionario;
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
 
 	@Query("select obj from Funcionario obj where obj.cpf =:cpf")
-	Funcionario buscarCPF(@Param("cpf") String cpf);
+	Optional<Funcionario> buscarCPF(@Param("cpf") String cpf);
 	
 	@Query("select obj from Funcionario obj where obj.login =:login")
-	Funcionario buscarlogin1(@Param("login") String login);
+	 Optional<Funcionario> buscarlogin(@Param("login") String login);
 	
 	@Query("select u from Funcionario u where u.login =?1 and ativo = true")
 	Funcionario acessoLogin(String login);

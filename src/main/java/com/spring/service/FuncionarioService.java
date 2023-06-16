@@ -1,5 +1,6 @@
 package com.spring.service;
 
+import com.spring.config.ModelMapperConfig;
 import com.spring.domain.Funcionario;
 import com.spring.domain.enuns.CargoEnum;
 import com.spring.domain.enuns.StatusEnum;
@@ -7,6 +8,7 @@ import com.spring.dtos.FuncionarioDTO;
 import com.spring.repository.FuncionarioRepository;
 import com.spring.service.exceptions.DataIntegratyViolationException;
 import com.spring.service.exceptions.ObjectNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,16 @@ import java.util.Optional;
 public class FuncionarioService {
 
 	@Autowired
+	private ModelMapper mapper;
+
+	@Autowired
 	private FuncionarioRepository funcionarioRepository;
 
 	@Autowired
 	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
 
 	public Funcionario buscarid(Long id) {
-		Optional<Funcionario> obj = funcionarioRepository.findById(id); // Já que está Optional, ele pode encontrar o id
-																		// ou não
+		Optional<Funcionario> obj = funcionarioRepository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id:" + id + ", Tipo:" + Funcionario.class.getName()));
 	}
@@ -40,58 +44,38 @@ public class FuncionarioService {
 		return funcionarioRepository.ListaFuncioTecAtivo();
 	}
 
-	public Funcionario salvar(FuncionarioDTO objDTO) throws Exception {
-		if (verificarCPF(objDTO) != null) {
-			throw new DataIntegratyViolationException("CPF já cadastrado");
-		}
-		if (verificarLogin(objDTO) != null) {
-			throw new DataIntegratyViolationException("Login já cadastrado");
-		}
-
-		return fromDTO(objDTO);
+	public Funcionario salvar(FuncionarioDTO funcionarioDTO) {
+		verificarCPF(funcionarioDTO);
+		verificarLogin(funcionarioDTO);
+		return funcionarioRepository.save(mapper.map(funcionarioDTO, Funcionario.class));
 
 	}
 
-	public Funcionario atualizar(Long id, @Valid FuncionarioDTO objDTO) throws Exception {
+	public Funcionario atualizar(Long id, @Valid FuncionarioDTO funcionarioDTO) throws Exception {
 		Funcionario funcionario = buscarid(id);
+		verificarCPF(funcionarioDTO);
 
-		if (verificarCPF(objDTO) != null && verificarCPF(objDTO).getId() != id) {
-			throw new DataIntegratyViolationException("CPF já cadastrado");
-		}
-
-		funcionario.setNome(objDTO.getNome());
-		funcionario.setCpf(objDTO.getCpf());
-		funcionario.setTelefone(objDTO.getTelefone());
-		funcionario.setCargo(CargoEnum.toEnum(objDTO.getCargo()));
-		funcionario.setLogin(objDTO.getLogin());
-
-		String senhaCriptografada = new BCryptPasswordEncoder().encode(objDTO.getSenha());
-		funcionario.setSenha(senhaCriptografada);
-
+		funcionario.setNome(funcionarioDTO.getNome());
+		funcionario.setCpf(funcionarioDTO.getCpf());
+		funcionario.setTelefone(funcionarioDTO.getTelefone());
+		funcionario.setCargo(CargoEnum.toEnum(funcionarioDTO.getCargo()));
+		funcionario.setLogin(funcionarioDTO.getLogin());
+		funcionario.setSenha(new BCryptPasswordEncoder().encode(funcionarioDTO.getSenha()));
 		return funcionarioRepository.save(funcionario);
 	}
-
-//	public void delete(Long id) {
-//		Funcionario obj = buscarid(id);
-//		if (obj.getList().size() > 0) {
-//			throw new DataIntegratyViolationException("Funcionário possui Ordens de Serviços ativo, não pode ser excluido");
-//		}
-//		funcionarioRepository.deleteById(id);
-//
-//	}
 
 	public Funcionario desativarFuncionario(Long id) {
 
 		Funcionario obj = buscarid(id);
 		boolean existeOSAberto = obj.getList().stream().anyMatch(os -> {
-			
+
 			try {
 				return os.getStatus().equals(StatusEnum.ABERTO);
 			} catch (IllegalAccessException e) {
-				
+
 				e.printStackTrace();
 			}
-			
+
 			return false;
 		});
 		
@@ -119,20 +103,18 @@ public class FuncionarioService {
 
 	}
 
-	private Funcionario verificarCPF(FuncionarioDTO objDTO) {
-		Funcionario obj = funcionarioRepository.buscarCPF(objDTO.getCpf());
-		if (obj != null) {
-			return obj;
+	private void verificarCPF(FuncionarioDTO funcionarioDTO) {
+		Optional<Funcionario> cliente = funcionarioRepository.buscarCPF(funcionarioDTO.getCpf());
+		if (cliente.isPresent() && !cliente.get().getCpf().equals(funcionarioDTO.getCpf())) {
+			throw new DataIntegratyViolationException("CPF já cadastrado");
 		}
-		return null;
 	}
 
-	private Funcionario verificarLogin(FuncionarioDTO objDto) {
-		Funcionario obj = funcionarioRepository.buscarlogin1(objDto.getLogin());
-		if (obj != null) {
-			return obj;
+	private void verificarLogin(FuncionarioDTO funcionarioDTO) {
+		Optional<Funcionario> funcionario = funcionarioRepository.buscarCPF(funcionarioDTO.getLogin());
+		if (funcionario.isPresent()) {
+			throw new DataIntegratyViolationException("Login já cadastrado");
 		}
-		return null;
 	}
 
 	private Funcionario fromDTO(FuncionarioDTO objDto) throws IllegalAccessException {

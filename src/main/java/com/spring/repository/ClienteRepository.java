@@ -7,9 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import com.spring.domain.Cliente;
 
+import java.util.Optional;
+
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long>{
 
 	@Query("select obj from Cliente obj where obj.cpf =:cpf")
-	Cliente buscarCPF(@Param("cpf") String cpf);
+	Optional<Cliente> buscarCPF(@Param("cpf") String cpf);
 }

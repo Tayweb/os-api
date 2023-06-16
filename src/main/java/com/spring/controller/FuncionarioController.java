@@ -3,9 +3,12 @@ package com.spring.controller;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.spring.config.ModelMapperConfig;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,64 +29,47 @@ import com.spring.service.FuncionarioService;
 @RequestMapping(value = "/funcionario")
 public class FuncionarioController {
 
-	@Autowired
-	private FuncionarioService funcionarioService;
+    @Autowired
+    private ModelMapper mapper;
+    @Autowired
+    private FuncionarioService funcionarioService;
 
-	@GetMapping(value = "/buscar/{id}", produces = "application/json")
-	public ResponseEntity<FuncionarioDTO> buscarPorId(@PathVariable Long id) throws Exception {
-		FuncionarioDTO objDto = new FuncionarioDTO(funcionarioService.buscarid(id));
-		return ResponseEntity.ok().body(objDto);
-	}
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<FuncionarioDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok().body(mapper.map(funcionarioService.buscarid(id), FuncionarioDTO.class));
+    }
 
-	@GetMapping(value = "listar")
-	public ResponseEntity<List<FuncionarioDTO>> listar() throws Exception {
-		List<Funcionario> list = funcionarioService.listar();
-		List<FuncionarioDTO> listDTO = new ArrayList<>();
+    @GetMapping
+    public ResponseEntity<List<FuncionarioDTO>> listar() {
+        return ResponseEntity.ok().body(funcionarioService.listar()
+                .stream().map(funcionario ->
+                        mapper.map(funcionario, FuncionarioDTO.class))
+                .collect(Collectors.toList()));
+    }
 
-		for (Funcionario obj : list) {
-			listDTO.add(new FuncionarioDTO(obj));
-		}
-		return ResponseEntity.ok().body(listDTO);
-	}
-	
-	
-	@GetMapping(value = "listatecnico")
-	public ResponseEntity<List<FuncionarioDTO>> listarTecnico() throws Exception {
-		List<Funcionario> list = funcionarioService.listarTecnico();
-		List<FuncionarioDTO> listDTO = new ArrayList<>();
-		
-		for (Funcionario obj : list) {
-			listDTO.add(new FuncionarioDTO(obj));
-		}
-		return ResponseEntity.ok().body(listDTO);
-	}
+    @GetMapping(value = "listatecnico")
+    public ResponseEntity<List<FuncionarioDTO>> listarTecnico(){
+        return ResponseEntity.ok().body(funcionarioService.listarTecnico()
+                .stream().map(funcionario ->
+                        mapper.map(funcionario, FuncionarioDTO.class))
+                .collect(Collectors.toList()));
+    }
 
-	@PostMapping(value = "salvar")
-	public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioDTO objDTO) throws Exception {
-		Funcionario mewObj = funcionarioService.salvar(objDTO);
+    @PostMapping
+    public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioDTO objDTO) throws Exception {
+        Funcionario mewObj = funcionarioService.salvar(objDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(mewObj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(mewObj.getId()).toUri();
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<FuncionarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody FuncionarioDTO objDTO) throws Exception {
+        return ResponseEntity.ok().body(mapper.map(funcionarioService.atualizar(id, objDTO), FuncionarioDTO.class));
+    }
 
-		return ResponseEntity.created(uri).build();
-	}
-
-	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<FuncionarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody FuncionarioDTO objDTO)
-			throws IllegalAccessException, Exception {
-
-		FuncionarioDTO newObj = new FuncionarioDTO(funcionarioService.atualizar(id, objDTO));
-		return ResponseEntity.ok().body(newObj);
-	}
-
-	@PutMapping(value = "/desativar/{id}")
-	public ResponseEntity<FuncionarioDTO> desativarFuncionario(@PathVariable Long id) throws IllegalAccessException {
-		funcionarioService.desativarFuncionario(id);
-		return ResponseEntity.noContent().build();
-	}
-
-//	@DeleteMapping(value = "excluir/{id}")
-//	public ResponseEntity<Void> delete(@PathVariable Long id) {
-//		funcionarioService.delete(id);
-//		return ResponseEntity.noContent().build();
-//	}
+    @PutMapping(value = "/desativar/{id}")
+    public ResponseEntity<FuncionarioDTO> desativarFuncionario(@PathVariable Long id) {
+        funcionarioService.desativarFuncionario(id);
+        return ResponseEntity.noContent().build();
+    }
 }
