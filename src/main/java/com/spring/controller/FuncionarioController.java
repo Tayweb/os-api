@@ -1,17 +1,14 @@
 package com.spring.controller;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.spring.config.ModelMapperConfig;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +33,7 @@ public class FuncionarioController {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<FuncionarioDTO> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok().body(mapper.map(funcionarioService.buscarid(id), FuncionarioDTO.class));
+        return ResponseEntity.ok().body(mapper.map(funcionarioService.buscarId(id), FuncionarioDTO.class));
     }
 
     @GetMapping

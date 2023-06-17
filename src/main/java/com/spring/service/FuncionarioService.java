@@ -29,7 +29,7 @@ public class FuncionarioService {
 	@Autowired
 	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
 
-	public Funcionario buscarid(Long id) {
+	public Funcionario buscarId(Long id) {
 		Optional<Funcionario> obj = funcionarioRepository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id:" + id + ", Tipo:" + Funcionario.class.getName()));
@@ -62,7 +62,7 @@ public class FuncionarioService {
 	}
 
 	public Funcionario atualizar(Long id, @Valid FuncionarioDTO funcionarioDTO) {
-		Funcionario funcionario = buscarid(id);
+		Funcionario funcionario = buscarId(id);
 		verificarCPF(funcionarioDTO);
 
 		funcionario.setNome(funcionarioDTO.getNome());
@@ -76,22 +76,14 @@ public class FuncionarioService {
 
 	public Funcionario desativarFuncionario(Long id) {
 
-		Funcionario obj = buscarid(id);
-		boolean existeOSAberto = obj.getList().stream().anyMatch(os -> {
-				return os.getStatus().equals(StatusEnum.ABERTO);
+		Funcionario obj = buscarId(id);
+			boolean existeOSAberto = obj.getList().stream().anyMatch(os -> os.getStatus().equals(StatusEnum.ABERTO));
 
-		});
+			boolean existeOSAndamento = obj.getList().stream().anyMatch(os -> os.getStatus().equals(StatusEnum.ANDAMENTO));
 
-		boolean existeOSAndamento = obj.getList().stream().anyMatch(os -> {
-				return os.getStatus().equals(StatusEnum.ANDAMENTO);
-
-		});
-
-		if (existeOSAberto || existeOSAndamento) {
-			throw new DataIntegratyViolationException(
-					"Funcionário possui Ordens de Serviços ativos, não pode ser desativado");
-
-		}
+			if (existeOSAberto || existeOSAndamento) {
+				throw new DataIntegratyViolationException("Funcionário possui Ordens de Serviços ativos, portanto não pode ser desativado");
+			}
 
 		obj.setDataDemissao(LocalDateTime.now());
 		obj.setAtivo(false);

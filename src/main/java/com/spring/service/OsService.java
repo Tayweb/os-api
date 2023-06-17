@@ -53,7 +53,7 @@ public class OsService {
 				.prioridade(PrioridadeEnum.consultarPrioridade(obj.getPrioridade()))
 				.status(StatusEnum.consultarStatus(obj.getStatus()))
 				.cliente(clienteService.buscarid(obj.getCliente()))
-				.funcionario(funcionarioService.buscarid(obj.getFuncionario()))
+				.funcionario(funcionarioService.buscarId(obj.getFuncionario()))
 				.dataAbertura(LocalDateTime.now())
 				.build();
 
