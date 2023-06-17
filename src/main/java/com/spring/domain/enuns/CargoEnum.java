@@ -1,38 +1,34 @@
 package com.spring.domain.enuns;
 
+import com.spring.service.exceptions.NegocioException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public enum CargoEnum {
 
-	ASSISTENTE(0, "ASSISTENTE"), TECNICO(1, "TECNICO");
+    ASSISTENTE(1, "ASSISTENTE"),
+    TECNICO(2, "TECNICO")
+    ;
 
-	private Integer cod;
-	private String descricao;
+    private Integer cod;
+    private String descricao;
 
-	private CargoEnum(Integer cod, String descricao) {
-		this.cod = cod;
-		this.descricao = descricao;
-	}
-
-	public Integer getCod() {
-		return cod;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-	
-	
-	public static CargoEnum toEnum(Integer cod) throws IllegalAccessException {
-		if (cod == null) {
-			return null;
-		}
-		
-		for(CargoEnum x: CargoEnum.values()) {
-			if (cod.equals(x.getCod())) {
-				return x;
-			}
-		}
-		
-		throw new IllegalAccessException("Cargo inválido!" + cod);
-	}
+    public static Integer consultarCargo(Integer cod) {
+        if (Objects.isNull(cod)) {
+            return null;
+        }
+        for (CargoEnum cargoEnum : CargoEnum.values()) {
+            if (cod.equals(cargoEnum.getCod())) {
+                return cargoEnum.cod;
+            }
+        }
+        throw new NegocioException("Código de cargo inválido" + cod);
+    }
 
 }

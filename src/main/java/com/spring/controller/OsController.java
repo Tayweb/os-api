@@ -1,11 +1,9 @@
 package com.spring.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.spring.domain.OS;
+import com.spring.dtos.OSDTO;
+import com.spring.service.OsService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,47 +16,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.spring.domain.OS;
-import com.spring.dtos.OSDTO;
-import com.spring.service.OsService;
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/os")
 public class OsController {
 
-	@Autowired
-	private OsService osService;
+    @Autowired
+    private ModelMapper mapper;
 
-	@GetMapping(value = "/buscar/{id}")
-	public ResponseEntity<OSDTO> buscarPorId(@PathVariable Long id) throws Exception {
-		OSDTO objDTO = new OSDTO(osService.buscarid(id));
-		return ResponseEntity.ok().body(objDTO);
-	}
+    @Autowired
+    private OsService osService;
 
-	@GetMapping(value = "/listar")
-	public ResponseEntity<List<OSDTO>> listar() throws Exception {
-		List<OS> list = osService.listar();
-		List<OSDTO> listDTO = new ArrayList<>();
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<OSDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok().body(mapper.map(osService.buscarid(id), OSDTO.class));
+    }
 
-		for (OS obj : list) {
-			listDTO.add(new OSDTO(obj));
-		}
+    @GetMapping
+    public ResponseEntity<List<OSDTO>> listar() {
+        List<OS> list = osService.listar();
+        return ResponseEntity.ok().body(osService.listar()
+                .stream()
+                .map(os -> mapper.map(os, OSDTO.class)).collect(Collectors.toList()));
+    }
 
-		return ResponseEntity.ok().body(listDTO);
-	}
+    @PostMapping
+    public ResponseEntity<OSDTO> salvar(@Valid @RequestBody OSDTO obj) {
+        OSDTO osdto = mapper.map(osService.salvar(obj), OSDTO.class);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(osdto.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
 
-	@PostMapping(value = "/salvar")
-	public ResponseEntity<OSDTO> salvar(@Valid @RequestBody OSDTO obj) throws Exception {
-		obj = new OSDTO(osService.salvar(obj));
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).build();
-	}
-	
-	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<OSDTO>atualizar(@Valid @RequestBody OSDTO obj) throws Exception{
-		obj = new OSDTO(osService.atualizar(obj));
-		return ResponseEntity.ok().body(obj);
-	}
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<OSDTO> atualizar(@Valid @RequestBody OSDTO obj) {
+        return ResponseEntity.ok().body(mapper.map(osService.atualizar(obj), OSDTO.class));
+    }
 
 }

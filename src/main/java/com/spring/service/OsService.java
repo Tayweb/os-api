@@ -1,22 +1,18 @@
 package com.spring.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.spring.domain.Cliente;
-import com.spring.domain.Funcionario;
 import com.spring.domain.OS;
 import com.spring.domain.enuns.PrioridadeEnum;
 import com.spring.domain.enuns.StatusEnum;
 import com.spring.dtos.OSDTO;
 import com.spring.repository.OSRepository;
 import com.spring.service.exceptions.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OsService {
@@ -40,34 +36,32 @@ public class OsService {
 		return osRepository.findAll();
 	}
 
-	public OS salvar(@Valid OSDTO obj) throws Exception {
+	public OS salvar(@Valid OSDTO obj) {
 		return fromDTO(obj);
 	}
 
-	public OS atualizar(@Valid OSDTO obj) throws Exception {
+	public OS atualizar(@Valid OSDTO obj) {
 		buscarid(obj.getId());
 		return fromDTO(obj);
 		
 	}
 
-	private OS fromDTO(OSDTO obj) throws Exception {
-		OS newObj = new OS();
-		newObj.setId(obj.getId());
-		newObj.setObservacoes(obj.getObservacoes());
-		newObj.setPrioridade(PrioridadeEnum.toEnum(obj.getPrioridade().getCod()));
-		newObj.setStatus(StatusEnum.toEnum(obj.getStatus().getCod()));
+	private OS fromDTO(OSDTO obj) {
+		OS newOS = OS.builder()
+				.id(obj.getId())
+				.observacoes(obj.getObservacoes())
+				.prioridade(PrioridadeEnum.consultarPrioridade(obj.getPrioridade()))
+				.status(StatusEnum.consultarStatus(obj.getStatus()))
+				.cliente(clienteService.buscarid(obj.getCliente()))
+				.funcionario(funcionarioService.buscarid(obj.getFuncionario()))
+				.dataAbertura(LocalDateTime.now())
+				.build();
 
-		Cliente cliente = clienteService.buscarid(obj.getCliente());
-		Funcionario funcionario = funcionarioService.buscarid(obj.getFuncionario());
-
-		newObj.setCliente(cliente);
-		newObj.setFuncionario(funcionario);
-		
-		if (newObj.getStatus().getCod().equals(2)) {
-			newObj.setDataFechamento(LocalDateTime.now());
+		if (newOS.getStatus().getCod().equals(2)) {
+			newOS.setDataFechamento(LocalDateTime.now());
 		}
 		
-		return osRepository.save(newObj);
+		return osRepository.save(newOS);
 	}
 
 }

@@ -14,7 +14,9 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spring.domain.enuns.PrioridadeEnum;
 import com.spring.domain.enuns.StatusEnum;
+import lombok.Builder;
 
+@Builder
 @Entity
 public class OS implements Serializable {
 
@@ -85,7 +87,7 @@ public class OS implements Serializable {
 		this.dataFechamento = dataFechamento;
 	}
 
-	public PrioridadeEnum getPrioridade() throws IllegalAccessException {
+	public PrioridadeEnum getPrioridade() {
 		return PrioridadeEnum.toEnum(this.prioridade);
 	}
 
@@ -101,7 +103,7 @@ public class OS implements Serializable {
 		this.observacoes = observacoes;
 	}
 
-	public StatusEnum getStatus() throws IllegalAccessException {
+	public StatusEnum getStatus() {
 		return StatusEnum.toEnum(this.status);
 	}
 

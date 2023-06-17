@@ -17,7 +17,6 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> objectNotFoundException(ObjectNotFoundException e) {
 		StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
 				e.getMessage());
-
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
@@ -25,11 +24,6 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> objectNotFoundException(DataIntegratyViolationException e) {
 		StandardError error = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
 				e.getMessage());
-
-		/*
-		 * Bad Request indica que o servidor não pode ou não irá processar a requisição
-		 * devido a alguma coisa. Por exemplo, salvar um usuario já cadastrado
-		 */
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
 

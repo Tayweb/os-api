@@ -1,6 +1,5 @@
 package com.spring.service;
 
-import com.spring.config.ModelMapperConfig;
 import com.spring.domain.Funcionario;
 import com.spring.domain.enuns.CargoEnum;
 import com.spring.domain.enuns.StatusEnum;
@@ -47,18 +46,29 @@ public class FuncionarioService {
 	public Funcionario salvar(FuncionarioDTO funcionarioDTO) {
 		verificarCPF(funcionarioDTO);
 		verificarLogin(funcionarioDTO);
-		return funcionarioRepository.save(mapper.map(funcionarioDTO, Funcionario.class));
+		Funcionario funcionario = Funcionario.builder()
+				.id(funcionarioDTO.getId())
+				.nome(funcionarioDTO.getNome())
+				.cpf(funcionarioDTO.getCpf())
+				.telefone(funcionarioDTO.getTelefone())
+				.cargo(CargoEnum.consultarCargo(funcionarioDTO.getCargo()))
+				.login(funcionarioDTO.getLogin())
+				.senha(new BCryptPasswordEncoder().encode(funcionarioDTO.getSenha()))
+				.build();
 
+		funcionario = funcionarioRepository.save(funcionario);
+		implementacaoUserDetailsService.insereAcessoPadrao(funcionario.getId());
+		return funcionarioRepository.save(mapper.map(funcionarioDTO, Funcionario.class));
 	}
 
-	public Funcionario atualizar(Long id, @Valid FuncionarioDTO funcionarioDTO) throws Exception {
+	public Funcionario atualizar(Long id, @Valid FuncionarioDTO funcionarioDTO) {
 		Funcionario funcionario = buscarid(id);
 		verificarCPF(funcionarioDTO);
 
 		funcionario.setNome(funcionarioDTO.getNome());
 		funcionario.setCpf(funcionarioDTO.getCpf());
 		funcionario.setTelefone(funcionarioDTO.getTelefone());
-		funcionario.setCargo(CargoEnum.toEnum(funcionarioDTO.getCargo()));
+		funcionario.setCargo(CargoEnum.consultarCargo(funcionarioDTO.getCargo()));
 		funcionario.setLogin(funcionarioDTO.getLogin());
 		funcionario.setSenha(new BCryptPasswordEncoder().encode(funcionarioDTO.getSenha()));
 		return funcionarioRepository.save(funcionario);
@@ -68,27 +78,13 @@ public class FuncionarioService {
 
 		Funcionario obj = buscarid(id);
 		boolean existeOSAberto = obj.getList().stream().anyMatch(os -> {
-
-			try {
 				return os.getStatus().equals(StatusEnum.ABERTO);
-			} catch (IllegalAccessException e) {
 
-				e.printStackTrace();
-			}
-
-			return false;
 		});
-		
+
 		boolean existeOSAndamento = obj.getList().stream().anyMatch(os -> {
-			
-			try {
 				return os.getStatus().equals(StatusEnum.ANDAMENTO);
-			} catch (IllegalAccessException e) {
-				
-				e.printStackTrace();
-			}
-			
-			return false;
+
 		});
 
 		if (existeOSAberto || existeOSAndamento) {
@@ -115,25 +111,6 @@ public class FuncionarioService {
 		if (funcionario.isPresent()) {
 			throw new DataIntegratyViolationException("Login já cadastrado");
 		}
-	}
-
-	private Funcionario fromDTO(FuncionarioDTO objDto) throws IllegalAccessException {
-		Funcionario funcionario = new Funcionario();
-		funcionario.setId(objDto.getId());
-		funcionario.setNome(objDto.getNome());
-		funcionario.setCpf(objDto.getCpf());
-		funcionario.setTelefone(objDto.getTelefone());
-		funcionario.setCargo(CargoEnum.toEnum(objDto.getCargo()));
-		funcionario.setLogin(objDto.getLogin());
-
-		String senhaCriptografada = new BCryptPasswordEncoder().encode(objDto.getSenha());
-
-		funcionario.setSenha(senhaCriptografada);
-
-		funcionario = funcionarioRepository.save(funcionario);
-		implementacaoUserDetailsService.insereAcessoPadrao(funcionario.getId());
-
-		return funcionario;
 	}
 
 }
